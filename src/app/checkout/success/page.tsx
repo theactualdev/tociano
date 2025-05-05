@@ -6,8 +6,8 @@ import Link from "next/link";
 import { CheckCircle2, Package, Clock } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Separator } from "@/src/components/ui/separator";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import { db } from "@/lib/firebase";
+import { formatCurrency, formatDate } from "@/src/lib/utils";
+import { db } from "@/src/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { Suspense } from "react";
 

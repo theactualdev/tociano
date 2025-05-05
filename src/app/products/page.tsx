@@ -3,35 +3,29 @@
 import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 import {
   collection,
-  query,@/src/components/ui/button
-  where,@/src/components/ui/card
-  getDocs,@/src/components/ui/input
-  deleteDoc,@/src/components/ui/label
-  doc,@/src/components/ui/slider
-  addDoc,@/src/components/ui/checkbox
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+  addDoc,
 } from "firebase/firestore";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {@/src/components/ui/selectonents/ui/slider";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,@/src/context/CartContext
-  SelectContent,
-  SelectItem,@/src/context/AuthContext
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/src/components/ui/button";
+import { Card } from "@/src/components/ui/card";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
+import { Checkbox } from "@/src/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/src/components/ui/select";
 import { Heart, ShoppingBag, SlidersHorizontal, X } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
-import { useCart } from "@/context/CartContext";
+import { formatCurrency } from "@/src/lib/utils";
+import { useCart } from "@/src/context/CartContext";
 import { useToast } from "@/src/hooks/use-toast";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/src/context/AuthContext";
+import { Slider } from "@/src/components/ui/slider";
 
 interface WishlistItem {
   id: string;

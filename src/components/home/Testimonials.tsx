@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Quote } from "lucide-react";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 import { useEffect, useState } from "react";
 
 interface Testimonial {

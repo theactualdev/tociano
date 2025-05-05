@@ -4,20 +4,20 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/src/context/AuthContext";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 import {
-  collection,@/src/components/ui/button
-  query,@/src/components/ui/card
+  collection,
+  query,
   where,
-  getDocs,@/src/context/CartContext
+  getDocs,
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/src/components/ui/button";
+import { Card } from "@/src/components/ui/card";
 import { Heart, Trash2, ShoppingBag } from "lucide-react";
-import { useCart } from "@/context/CartContext";
-import { formatCurrency } from "@/lib/utils";
+import { useCart } from "@/src/context/CartContext";
+import { formatCurrency } from "@/src/lib/utils";
 import { useToast } from "@/src/hooks/use-toast";
 
 interface WishlistItem {

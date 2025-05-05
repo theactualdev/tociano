@@ -2,17 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/src/context/AuthContext";
-import { updateUserSettings, getUserSettings } from "@/lib/firebase";
+import { updateUserSettings, getUserSettings } from "@/src/lib/firebase";
 import { Button } from "@/src/components/ui/button";
-import {@/src/components/ui/card
-  Card,@/src/components/ui/label
-  CardContent,@/src/components/ui/switch
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
+import { Label } from "@/src/components/ui/label";
+import { Switch } from "@/src/components/ui/switch";
 import { useToast } from "@/src/hooks/use-toast";
 import { Bell, Mail, Lock, Shield, CreditCard } from "lucide-react";
 

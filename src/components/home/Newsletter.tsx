@@ -5,7 +5,7 @@ import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { useToast } from "@/src/hooks/use-toast";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");

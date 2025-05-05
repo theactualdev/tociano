@@ -13,9 +13,9 @@ import { Separator } from "@/src/components/ui/separator";
 import { useToast } from "@/src/hooks/use-toast";
 import { useAuth } from "@/src/context/AuthContext";
 import { useCart } from "@/src/context/CartContext";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/src/lib/utils";
 import { doc, addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 
 export default function CheckoutPage() {
   const { user, userData } = useAuth();

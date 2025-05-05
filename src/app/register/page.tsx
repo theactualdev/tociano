@@ -6,17 +6,10 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/context/AuthContext";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
-import {@/src/components/ui/card
-  Card,@/src/components/ui/label
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/src/components/ui/card";
+import { Label } from "@/src/components/ui/label";
 import { useToast } from "@/src/hooks/use-toast";
-import { handleFirebaseError } from "@/lib/utils";
+import { handleFirebaseError } from "@/src/lib/utils";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");

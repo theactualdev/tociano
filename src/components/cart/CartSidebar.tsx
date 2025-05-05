@@ -7,7 +7,7 @@ import { Separator } from "@/src/components/ui/separator";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/src/lib/utils";
 
 interface CartSidebarProps {
   isOpen: boolean;

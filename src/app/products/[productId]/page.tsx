@@ -12,11 +12,11 @@ import {
 } from "@/src/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { Label } from "@/src/components/ui/label";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/src/lib/utils";
 import { useCart, CartItem } from "@/src/context/CartContext";
 import { useToast } from "@/src/hooks/use-toast";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 import { useEffect, useState } from "react";
 
 // Define a type for the product data

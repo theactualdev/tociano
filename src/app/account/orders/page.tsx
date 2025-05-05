@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/src/context/AuthContext";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/src/components/ui/card";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/src/lib/utils";
 import {
   Tabs,
   TabsContent,

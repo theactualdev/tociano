@@ -7,7 +7,7 @@ import { AspectRatio } from "@/src/components/ui/aspect-ratio";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/src/components/ui/card";
 import { Heart, ShoppingBag, Eye } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/src/lib/utils";
 import { useCart, CartItem } from "@/src/context/CartContext";
 import {
   getFirestore,
@@ -16,7 +16,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db } from "@/src/lib/firebase";
 
 // Generate a random array of 4 unique numbers between 1 and the length of featuredProducts
 const getRandomProductIds = (count: number, max: number) => {

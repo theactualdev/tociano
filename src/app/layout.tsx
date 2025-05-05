@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import "./globals.css";
-import { montserrat, playfair } from "@/lib/fonts";
+import { montserrat, playfair } from "../lib/fonts";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { CartProvider } from "@/src/context/CartContext";
 import { WishlistProvider } from "@/src/context/WishlistContext";

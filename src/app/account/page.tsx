@@ -5,16 +5,9 @@ import { useAuth } from "@/src/context/AuthContext";
 import { Button } from "@/src/components/ui/button";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
-import {@/src/components/ui/card
-  Card,
-  CardContent,@/src/components/ui/avatar
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card";
 import { useToast } from "@/src/hooks/use-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 export default function AccountPage() {
   const { user, userData, updateUserProfile } = useAuth();
