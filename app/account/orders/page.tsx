@@ -1,29 +1,5 @@
 'use client';
 
-<<<<<<< HEAD:src/app/account/orders/page.tsx
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { useAuth } from "@/src/context/AuthContext";
-import { db } from "@/src/lib/firebase";
-import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import { formatCurrency, formatDate } from "@/src/lib/utils";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/src/components/ui/tabs";
-import { Package, Eye } from "lucide-react";
-=======
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -35,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Package, Eye } from 'lucide-react';
->>>>>>> parent of 8e0980b (mod: file arrangement changes):app/account/orders/page.tsx
 
 export default function OrdersPage() {
   const { user } = useAuth();

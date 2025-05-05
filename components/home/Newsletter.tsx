@@ -1,20 +1,11 @@
 'use client';
 
-<<<<<<< HEAD:src/components/home/Newsletter.tsx
-import { useState } from "react";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { useToast } from "@/src/hooks/use-toast";
-import { addDoc, collection } from "firebase/firestore";
-import { db } from "@/src/lib/firebase";
-=======
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
->>>>>>> parent of 8e0980b (mod: file arrangement changes):components/home/Newsletter.tsx
 
 export function Newsletter() {
   const [email, setEmail] = useState('');

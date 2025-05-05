@@ -1,26 +1,10 @@
 'use client';
 
-<<<<<<< HEAD:src/context/WishlistContext.tsx
-import { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "./AuthContext";
-import { db } from "../lib/firebase";
-import {
-  doc,
-  setDoc,
-  getDoc,
-  deleteDoc,
-  collection,
-  addDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-import { useToast } from "@/src/hooks/use-toast";
-=======
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { db } from '@/lib/firebase';
 import { doc, setDoc, getDoc, deleteDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
->>>>>>> parent of 8e0980b (mod: file arrangement changes):context/WishlistContext.tsx
 
 interface WishlistItem {
   id: string;

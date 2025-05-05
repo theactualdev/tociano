@@ -11,7 +11,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useCart, CartItem } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/src/lib/firebase";
+import { db } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 
 // Define a type for the product data

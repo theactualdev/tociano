@@ -1,28 +1,5 @@
 'use client';
 
-<<<<<<< HEAD:src/components/layout/Navbar.tsx
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  ShoppingBag,
-  User,
-  Menu,
-  X,
-  Search,
-  Heart,
-  Sun,
-  Moon,
-} from "lucide-react";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { useTheme } from "next-themes";
-import { cn } from "@/src/lib/utils";
-import { useAuth } from "@/src/context/AuthContext";
-import { useCart } from "@/src/context/CartContext";
-import { CartSidebar } from "@/src/components/cart/CartSidebar";
-import Image from "next/image";
-=======
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -35,7 +12,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { CartSidebar } from '@/components/cart/CartSidebar';
 import Image from 'next/image';
->>>>>>> parent of 8e0980b (mod: file arrangement changes):components/layout/Navbar.tsx
 
 const CATEGORIES = [
   { name: 'Women', href: '/products' },

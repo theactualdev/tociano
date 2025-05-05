@@ -1,15 +1,5 @@
 'use client';
 
-<<<<<<< HEAD:src/app/account/page.tsx
-import { useState } from "react";
-import { useAuth } from "@/src/context/AuthContext";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/src/components/ui/card";
-import { useToast } from "@/src/hooks/use-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
-=======
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -18,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
->>>>>>> parent of 8e0980b (mod: file arrangement changes):app/account/page.tsx
 
 export default function AccountPage() {
   const { user, userData, updateUserProfile } = useAuth();

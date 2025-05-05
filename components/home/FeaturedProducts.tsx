@@ -7,13 +7,8 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Heart, ShoppingBag, Eye } from "lucide-react";
-<<<<<<< HEAD:src/components/home/FeaturedProducts.tsx
-import { formatCurrency } from "@/src/lib/utils";
-import { useCart, CartItem } from "@/src/context/CartContext";
-=======
 import { formatCurrency } from "@/lib/utils";
 import { useCart, CartItem } from "@/context/CartContext";
->>>>>>> parent of 8e0980b (mod: file arrangement changes):components/home/FeaturedProducts.tsx
 import {
   getFirestore,
   collection,
@@ -21,7 +16,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "@/src/lib/firebase";
+import { db } from "@/lib/firebase";
+import { cn } from '@/lib/utils';
 
 // Generate a random array of 4 unique numbers between 1 and the length of featuredProducts
 const getRandomProductIds = (count: number, max: number) => {

@@ -1,20 +1,11 @@
 'use client'
 
-<<<<<<< HEAD:src/components/home/Testimonials.tsx
-import Image from "next/image";
-import { Quote } from "lucide-react";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/src/lib/firebase";
-import { useEffect, useState } from "react";
-=======
 import Image from 'next/image';
 import { Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useEffect, useState } from 'react';
->>>>>>> parent of 8e0980b (mod: file arrangement changes):components/home/Testimonials.tsx
 
 interface Testimonial{
   id: string;

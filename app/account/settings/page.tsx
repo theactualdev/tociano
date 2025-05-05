@@ -1,16 +1,5 @@
   'use client';
 
-<<<<<<< HEAD:src/app/account/settings/page.tsx
-import { useState, useEffect } from "react";
-import { useAuth } from "@/src/context/AuthContext";
-import { updateUserSettings, getUserSettings } from "@/src/lib/firebase";
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/components/ui/card";
-import { Label } from "@/src/components/ui/label";
-import { Switch } from "@/src/components/ui/switch";
-import { useToast } from "@/src/hooks/use-toast";
-import { Bell, Mail, Lock, Shield, CreditCard } from "lucide-react";
-=======
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { updateUserSettings, getUserSettings } from '@/lib/firebase';
@@ -20,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Bell, Mail, Lock, Shield, CreditCard } from 'lucide-react';
->>>>>>> parent of 8e0980b (mod: file arrangement changes):app/account/settings/page.tsx
 
 export default function SettingsPage() {
   const { user, userData } = useAuth();
