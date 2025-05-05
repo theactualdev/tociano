@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 250, 250, 250;
+  
+  /* Tociano Boutique Colors */
+  --primary: 212 175 55; /* Gold */
+  --primary-foreground: 255 255 255;
+  --secondary: 255 255 255; /* White */
+  --secondary-foreground: 51 51 51;
+  --accent: 212 175 55; /* Gold */
+  --accent-foreground: 51 51 51;
+  --success: 212 175 55; /* Gold */
+  --success-foreground: 255 255 255;
+  --warning: 212 175 55; /* Gold */
+  --warning-foreground: 51 51 51;
+  --destructive: 212 175 55; /* Gold */
+  --destructive-foreground: 255 255 255;
+  
+  --muted: 245 245 245; /* Light White */
+  --muted-foreground: 115 115 115;
+  
+  --background: 255 255 255; /* White */
+  --foreground: 51 51 51;
+  
+  --card: 255 255 255; /* White */
+  --card-foreground: 51 51 51;
+  --popover: 255 255 255; /* White */
+  --popover-foreground: 51 51 51;
+  
+  --border: 229 229 229;
+  --input: 229 229 229;
+  --ring: 212 175 55; /* Gold */
+  
+  --radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 38 38 38; /* Dark Gray */
+    --foreground: 212 175 55; /* Gold */
+    
+    --card: 48 48 48; /* Slightly lighter dark gray */
+    --card-foreground: 212 175 55; /* Gold */
+    
+    --popover: 48 48 48;
+    --popover-foreground: 212 175 55;
+    
+    --primary: 212 175 55; /* Gold */
+    --primary-foreground: 38 38 38; /* Dark Gray */
+    
+    --secondary: 48 48 48; /* Dark Gray */
+    --secondary-foreground: 212 175 55; /* Gold */
+    
+    --muted: 64 64 64; /* Darker Gray */
+    --muted-foreground: 150 150 150;
+    
+    --accent: 212 175 55; /* Gold */
+    --accent-foreground: 38 38 38; /* Dark Gray */
+    
+    --destructive: 212 175 55; /* Gold */
+    --destructive-foreground: 38 38 38; /* Dark Gray */
+    
+    --border: 64 64 64;
+    --input: 64 64 64;
+    --ring: 212 175 55; /* Gold */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-playfair;
+  }
+  
+  p, a, span, button, input, textarea, select {
+    @apply font-montserrat;
+  }
+}
+
+/* Custom animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-in-out;
+  }
+  
+  .product-image-zoom {
+    overflow: hidden;
+  }
+  
+  .product-image-zoom img {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .product-image-zoom:hover img {
+    transform: scale(1.05);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
