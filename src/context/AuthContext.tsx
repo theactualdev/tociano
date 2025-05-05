@@ -10,7 +10,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
+import { db, auth } from '../lib/firebase';
 
 type UserData = {
   uid: string;
