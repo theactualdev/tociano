@@ -21,7 +21,7 @@ export const metadata: Metadata = {
       url: "/favicon.ico",
       rel: "icon",
     },
-    { url: "/image.jpg", type: "image/png", rel: "apple-touch-icon" },
+    { url: "https://tociano.vercel.app/image.jpg", type: "image/png", rel: "apple-touch-icon" },
   ],
   applicationName: "Tociano Boutique",
   authors: [{ name: "Olayinka Ayodele", url: "https://olayinka.codes" }],
@@ -104,7 +104,7 @@ export const metadata: Metadata = {
     siteName: "Tociano Boutique",
     images: [
       {
-        url: "/image.jpg",
+        url: "https://tociano.vercel.app/image.jpg",
         width: 1200,
         height: 630,
         alt: "Tociano Boutique - Premium Nigerian Fashion",
@@ -117,7 +117,7 @@ export const metadata: Metadata = {
     creator: "@theactualdev",
     title: "Tociano Boutique - Premium Nigerian Fashion",
     description: "Discover luxury fashion at Tociano Boutique - Nigeria\'s premier fashion destination for elegant, high-quality clothing and accessories.",
-    images: "/image.jpg",
+    images: "https://tociano.vercel.app/image.jpg",
   },
   formatDetection: {
     telephone: true,
