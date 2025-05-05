@@ -14,7 +14,7 @@ export default function Home() {
       <section className="relative h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://res.cloudinary.com/dl1o1tzoj/image/upload/v1746457597/home-banner_qs0qth.jpg"
+            src="/home-banner.jpg"
             alt="Tociano Boutique Fashion"
             fill
             priority
@@ -81,7 +81,7 @@ export default function Home() {
             <div className="order-1 md:order-2">
               <AspectRatio ratio={3 / 4} className="overflow-hidden rounded-lg">
                 <Image
-                  src="https://res.cloudinary.com/dl1o1tzoj/image/upload/v1746457745/story_cqrz4g.jpg"
+                  src="/story.jpg"
                   alt="Tociano Boutique Story"
                   fill
                   className="object-cover"
