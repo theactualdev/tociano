@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     siteName: "Tociano Boutique",
     images: [
       {
-        url: "https://tociano.vercel.app/image.jpg",
+        url: "/image.jpg",
         width: 1200,
         height: 630,
         alt: "Tociano Boutique - Premium Nigerian Fashion",
@@ -86,7 +86,7 @@ export const metadata: Metadata = {
     description: "Discover authentic Nigerian fashion at Tociano Boutique. Premium Ankara prints, Aso Oke, and modern African luxury clothing for all occasions.",
     images: [
       {
-        url: "https://tociano.vercel.app/image.jpg",
+        url: "/image.jpg",
         alt: "Tociano Boutique - Premium Nigerian Fashion",
       }
     ],
