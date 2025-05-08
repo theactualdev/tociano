@@ -86,7 +86,7 @@ export function Navbar() {
             {/* <h1 className="text-2xl md:text-3xl font-bold text-primary">
               TOCIANO
             </h1> */}
-            <Image src="/logo.png" priority alt="Logo" width={100} height={100} />
+            <Image src="/logo.png" priority alt="Logo" width={50} height={50} />
           </Link>
 
           {/* Desktop Navigation */}
