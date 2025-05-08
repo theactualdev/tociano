@@ -9,6 +9,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { MaintenanceMode } from "@/components/MaintenanceMode";
+import Script from "next/script";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -74,12 +75,14 @@ export const metadata: Metadata = {
     title: "Tociano Boutique | Premium Nigerian Fashion",
     description: "Discover authentic Nigerian fashion at Tociano Boutique. Premium Ankara prints, Aso Oke, and modern African luxury clothing for all occasions.",
     siteName: "Tociano Boutique",
-    images: {
-      url: "https://tociano.vercel.app/image.jpg",
-      width: 1200,
-      height: 630,
-      alt: "Tociano Boutique - Premium Nigerian Fashion",
-    },
+    images: [
+      {
+        url: "https://tociano.vercel.app/image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Tociano Boutique - Premium Nigerian Fashion",
+      }
+    ],
     locale: "en_US",
   },
   twitter: {
@@ -88,10 +91,7 @@ export const metadata: Metadata = {
     creator: "@theactualdev",
     title: "Tociano Boutique | Premium Nigerian Fashion",
     description: "Discover authentic Nigerian fashion at Tociano Boutique. Premium Ankara prints, Aso Oke, and modern African luxury clothing for all occasions.",
-    images: {
-      url: "https://tociano.vercel.app/image.jpg",
-      alt: "Tociano Boutique - Premium Nigerian Fashion",
-    },
+    images: "https://tociano.vercel.app/image.jpg",
   },
   verification: {
     google: "verification_token",
