@@ -113,11 +113,9 @@ export default function RootLayout({
           <AuthProvider>
             <CartProvider>
               <WishlistProvider>
-                <MaintenanceMode>
                   <Navbar />
                   <main className="flex-grow">{children}</main>
                   <Footer />
-                </MaintenanceMode>
                 <Toaster />
               </WishlistProvider>
             </CartProvider>
