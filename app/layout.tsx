@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import "./globals.css";
 import { montserrat, playfair } from "@/lib/fonts";
 import { AuthProvider } from "@/context/AuthContext";
@@ -9,6 +9,12 @@ import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { MaintenanceMode } from "@/components/MaintenanceMode";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tociano.vercel.app"),
@@ -68,14 +74,12 @@ export const metadata: Metadata = {
     title: "Tociano Boutique | Premium Nigerian Fashion",
     description: "Discover authentic Nigerian fashion at Tociano Boutique. Premium Ankara prints, Aso Oke, and modern African luxury clothing for all occasions.",
     siteName: "Tociano Boutique",
-    images: [
-      {
-        url: "/image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Tociano Boutique - Premium Nigerian Fashion",
-      },
-    ],
+    images: {
+      url: "https://tociano.vercel.app/image.jpg",
+      width: 1200,
+      height: 630,
+      alt: "Tociano Boutique - Premium Nigerian Fashion",
+    },
     locale: "en_US",
   },
   twitter: {
@@ -84,17 +88,10 @@ export const metadata: Metadata = {
     creator: "@theactualdev",
     title: "Tociano Boutique | Premium Nigerian Fashion",
     description: "Discover authentic Nigerian fashion at Tociano Boutique. Premium Ankara prints, Aso Oke, and modern African luxury clothing for all occasions.",
-    images: [
-      {
-        url: "/image.jpg",
-        alt: "Tociano Boutique - Premium Nigerian Fashion",
-      }
-    ],
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
+    images: {
+      url: "https://tociano.vercel.app/image.jpg",
+      alt: "Tociano Boutique - Premium Nigerian Fashion",
+    },
   },
   verification: {
     google: "verification_token",
