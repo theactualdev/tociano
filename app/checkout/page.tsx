@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePaystackPayment } from 'react-paystack';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { formatCurrency } from '@/lib/utils';
 import { doc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, getSiteSettings } from '@/lib/firebase';
 
 export default function CheckoutPage() {
   const { user, userData } = useAuth();
@@ -23,11 +23,11 @@ export default function CheckoutPage() {
   const { toast } = useToast();
   const router = useRouter();
   
-  // Shipping options
-  const shippingOptions = [
+  // Default shipping options - will be updated from site settings
+  const [shippingOptions, setShippingOptions] = useState([
     { id: 'standard', name: 'Standard Delivery', price: 2000, description: '3-5 business days' },
     { id: 'express', name: 'Express Delivery', price: 4500, description: '1-2 business days' },
-  ];
+  ]);
   
   // State for form values
   const [formData, setFormData] = useState({
@@ -42,11 +42,43 @@ export default function CheckoutPage() {
   });
   
   // Shipping selection state
-  const [selectedShipping, setSelectedShipping] = useState(shippingOptions[0].id);
+  const [selectedShipping, setSelectedShipping] = useState('standard');
   
   // Calculate totals
   const shippingCost = shippingOptions.find(option => option.id === selectedShipping)?.price || 0;
   const total = subtotal + shippingCost;
+  
+  // Fetch shipping rates from site settings
+  useEffect(() => {
+    const fetchShippingRates = async () => {
+      try {
+        const siteSettings = await getSiteSettings();
+        
+        if (siteSettings?.shippingRates) {
+          const rates = siteSettings.shippingRates;
+          
+          setShippingOptions([
+            { 
+              id: 'standard', 
+              name: 'Standard Delivery', 
+              price: rates.standard || 2000, 
+              description: '3-5 business days' 
+            },
+            { 
+              id: 'express', 
+              name: 'Express Delivery', 
+              price: rates.express || 4500, 
+              description: '1-2 business days' 
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error fetching shipping rates:', error);
+      }
+    };
+    
+    fetchShippingRates();
+  }, []);
   
   // Handle form change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,6 +108,12 @@ export default function CheckoutPage() {
           method: selectedShipping,
           cost: shippingCost,
         },
+        // Add customer info in the format expected by admin page
+        customer: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          phone: formData.phone
+        },
         billing: {
           firstName: formData.firstName || 'N/A',
           lastName: formData.lastName || 'N/A',
@@ -85,6 +123,13 @@ export default function CheckoutPage() {
           city: formData.city || 'N/A',
           state: formData.state || 'N/A',
           postalCode: formData.postalCode || 'N/A',
+        },
+        shippingAddress: {
+          street: formData.address,
+          city: formData.city,
+          state: formData.state,
+          postalCode: formData.postalCode,
+          country: 'Nigeria'
         },
         subtotal,
         total,

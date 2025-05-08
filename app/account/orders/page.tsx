@@ -88,7 +88,7 @@ export default function OrdersPage() {
           <Package className="h-16 w-16 text-muted-foreground mb-4" />
           <h3 className="text-xl font-medium mb-2">No orders yet</h3>
           <p className="text-muted-foreground mb-6 text-center max-w-md">
-            You haven't placed any orders yet. Browse our products and place your first order!
+            You haven&apos;t placed any orders yet. Browse our products and place your first order!
           </p>
           <Button asChild>
             <Link href="/products">Browse Products</Link>

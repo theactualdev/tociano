@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ShoppingBag, User, Menu, X, Search, Heart, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Search, Heart, Sun, Moon, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useTheme } from 'next-themes';
@@ -12,6 +12,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { CartSidebar } from '@/components/cart/CartSidebar';
 import Image from 'next/image';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const CATEGORIES = [
   { name: 'Women', href: '/products' },
@@ -21,14 +23,39 @@ const CATEGORIES = [
   { name: 'Sale', href: '/products' },
 ];
 
+
 export function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin } = useAuth();
   const { cart, isCartOpen, setIsCartOpen } = useCart();
+  const [directAdminCheck, setDirectAdminCheck] = useState<boolean>(false);
+  
+  // Check admin status directly from Firestore
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log('Navbar - direct admin check:', userData.isAdmin);
+            setDirectAdminCheck(userData.isAdmin || false);
+          }
+        } catch (error) {
+          console.error('Error checking admin status in navbar:', error);
+        }
+      }
+    };
+    
+    checkAdminStatus();
+  }, [user]);
+  
+  // Use direct admin check or context-provided admin status
+  const userIsAdmin = isAdmin || directAdminCheck;
   
   // Calculate total quantity of items in cart
   const cartQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -77,6 +104,19 @@ export function Navbar() {
                 <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
               </Link>
             ))}
+            
+            {userIsAdmin && (
+              <Link
+                href="/admin"
+                className={cn(
+                  'text-sm font-medium hover:text-primary transition-colors relative group',
+                  pathname === '/admin' || pathname.startsWith('/admin/') ? 'text-primary' : 'text-foreground'
+                )}
+              >
+                Admin
+                <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
+              </Link>
+            )}
           </nav>
 
           {/* Actions */}
@@ -104,6 +144,20 @@ export function Navbar() {
                 <Sun className="h-5 w-5" />
               )}
             </Button> */}
+
+            {/* Admin Dashboard (Icon only for desktop) */}
+            {userIsAdmin && (
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Admin Dashboard"
+                asChild
+              >
+                <Link href="/admin">
+                  <LayoutDashboard className="h-5 w-5" />
+                </Link>
+              </Button>
+            )}
 
             {/* Wishlist button */}
             <Button
@@ -214,6 +268,16 @@ export function Navbar() {
                     >
                       Orders
                     </Link>
+                    {userIsAdmin && (
+                      <Link
+                        href="/admin"
+                        className="text-base font-medium py-2 flex items-center hover:text-primary transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <LayoutDashboard className="h-4 w-4 mr-2" />
+                        Admin Dashboard
+                      </Link>
+                    )}
                     <button
                       className="text-base font-medium py-2 text-left hover:text-primary transition-colors"
                       onClick={() => {

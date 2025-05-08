@@ -43,7 +43,7 @@ export function Testimonials() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">What Our Customers Say</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Don't just take our word for it - hear from our satisfied customers
+            Don&apos;t just take our word for it - hear from our satisfied customers
           </p>
         </div>
 
@@ -66,7 +66,7 @@ function TestimonialCard({ testimonial }: { testimonial: any }) {
         </div>
         
         <p className="flex-grow mb-6 italic text-muted-foreground">
-          "{testimonial.quote}"
+          &quot;{testimonial.quote}&quot;
         </p>
         
         <div className="flex items-center">

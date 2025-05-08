@@ -68,7 +68,7 @@ function CartItems() {
         <ShoppingBag className="h-16 w-16 text-muted-foreground mb-4" />
         <h3 className="text-xl font-semibold mb-2">Your cart is empty</h3>
         <p className="text-muted-foreground mb-6 text-center">
-          Looks like you haven't added any items to your cart yet.
+          Looks like you haven&apos;t added any items to your cart yet.
         </p>
         <Button asChild>
           <Link href="/products">Start Shopping</Link>

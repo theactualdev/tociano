@@ -115,7 +115,7 @@ function CheckoutDetails() {
             <div>
               <h3 className="font-semibold mb-1">Order Status: Processing</h3>
               <p className="text-sm text-muted-foreground">
-                We're preparing your order for shipment. You'll receive an email when your order ships.
+                We&apos;re preparing your order for shipment. You&apos;ll receive an email when your order ships.
               </p>
             </div>
           </div>

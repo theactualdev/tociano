@@ -8,6 +8,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { MaintenanceMode } from "@/components/MaintenanceMode";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tociano.codes"),
@@ -138,9 +139,11 @@ export default function RootLayout({
           <AuthProvider>
             <CartProvider>
               <WishlistProvider>
-                <Navbar />
-                <main className="flex-grow">{children}</main>
-                <Footer />
+                <MaintenanceMode>
+                  <Navbar />
+                  <main className="flex-grow">{children}</main>
+                  <Footer />
+                </MaintenanceMode>
                 <Toaster />
               </WishlistProvider>
             </CartProvider>

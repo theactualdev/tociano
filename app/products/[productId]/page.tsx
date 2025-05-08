@@ -26,14 +26,28 @@ interface Product {
   sizes: string[];
   category: string;
   inStock: boolean;
+  stock: number;
 }
 
-export default async function ProductPage({
+export default function ProductPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const resolvedParams = await params;
+  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
+  
+  useEffect(() => {
+    const resolveParams = async () => {
+      try {
+        const resolved = await params;
+        setResolvedParams(resolved);
+      } catch (error) {
+        console.error("Error resolving params:", error);
+      }
+    };
+    resolveParams();
+  }, [params]);
+
   const [product, setProduct] = useState<Product>({
     id: "",
     name: "",
@@ -45,6 +59,7 @@ export default async function ProductPage({
     sizes: [],
     category: "",
     inStock: false,
+    stock: 0,
   });
 
   useEffect(() => {
@@ -67,6 +82,7 @@ export default async function ProductPage({
             sizes: fetchedProduct.sizes || [],
             category: fetchedProduct.category || "",
             inStock: fetchedProduct.inStock || false,
+            stock: fetchedProduct.stock || 0,
           });
         } else {
           throw new Error("Product not found");
@@ -75,9 +91,10 @@ export default async function ProductPage({
         console.error("Error fetching product data:", error);
       }
     };
-    fetchProductData(resolvedParams.id);
-    resolvedParams;
-  }, [params]);
+    if (resolvedParams) {
+      fetchProductData(resolvedParams.id);
+    }
+  }, [resolvedParams]);
 
   const [mainImage, setMainImage] = useState<string | undefined>(undefined);
 
@@ -87,12 +104,32 @@ export default async function ProductPage({
     }
   }, [product.images]);
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[1]);
+  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [selectedSize, setSelectedSize] = useState<string>('');
   const { addToCart } = useCart();
   const { toast } = useToast();
 
-  const handleAddToCart = () => {
+  // Update color and size when product changes
+  useEffect(() => {
+    if (product.colors.length > 0) {
+      setSelectedColor(product.colors[0]);
+    }
+    if (product.sizes.length > 0) {
+      setSelectedSize(product.sizes[0]);
+    }
+  }, [product.colors, product.sizes]);
+
+  const handleAddToCart = async () => {
+    // Check if product is in stock
+    if (product.stock <= 0) {
+      toast({
+        title: "Out of Stock",
+        description: `${product.name} is currently out of stock.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     const cartItem: CartItem = {
       id: product.id,
       name: product.name,
@@ -103,12 +140,28 @@ export default async function ProductPage({
       size: selectedSize,
     };
 
-    addToCart(cartItem);
-
-    toast({
-      title: "Added to cart",
-      description: `${product.name} (${selectedSize}, ${selectedColor}) has been added to your cart.`,
-    });
+    try {
+      const result = await addToCart(cartItem);
+      
+      if (result && result.success) {
+        toast({
+          title: "Added to cart",
+          description: `${product.name} (${selectedSize}, ${selectedColor}) has been added to your cart.`,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to add product to cart. It may be out of stock.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not add product to cart. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const decreaseQuantity = () => {
@@ -265,15 +318,27 @@ export default async function ProductPage({
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <Button className="flex-1" size="lg" onClick={handleAddToCart}>
+              <Button 
+                className="flex-1" 
+                size="lg" 
+                onClick={handleAddToCart}
+                disabled={product.stock <= 0}
+              >
                 <ShoppingBag className="mr-2 h-5 w-5" />
-                Add to Cart
+                {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
               </Button>
               <Button variant="outline" size="lg" className="flex-1">
                 <Heart className="mr-2 h-5 w-5" />
                 Add to Wishlist
               </Button>
             </div>
+
+            {/* Stock status indicator */}
+            {product.stock <= 0 && (
+              <div className="mt-4 p-3 bg-destructive/10 rounded text-destructive text-sm">
+                This product is currently out of stock. Please check back later.
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -327,7 +392,7 @@ export default async function ProductPage({
                 Returns Policy
               </h3>
               <p>
-                If you're not completely satisfied with your purchase, you can
+                If you&apos;re not completely satisfied with your purchase, you can
                 return it within 14 days of delivery. Items must be unworn,
                 unwashed, and with all original tags attached. Please note that
                 the customer is responsible for the return shipping costs.

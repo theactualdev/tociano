@@ -17,7 +17,7 @@ export type CartItem = {
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (item: CartItem) => void;
+  addToCart: (item: CartItem) => Promise<{success: boolean, message?: string}>;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -86,31 +86,66 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   }, [cart, user]);
 
   // Add item to cart
-  const addToCart = (item: CartItem) => {
-    setCart(prevCart => {
-      // Check if item already exists in cart
-      const existingItemIndex = prevCart.findIndex(cartItem => 
-        cartItem.id === item.id && 
-        cartItem.size === item.size && 
-        cartItem.color === item.color
-      );
-
-      if (existingItemIndex >= 0) {
-        // Update quantity if item exists
-        const updatedCart = [...prevCart];
-        updatedCart[existingItemIndex] = {
-          ...updatedCart[existingItemIndex],
-          quantity: updatedCart[existingItemIndex].quantity + item.quantity
-        };
-        return updatedCart;
+  const addToCart = async (item: CartItem): Promise<{success: boolean, message?: string}> => {
+    try {
+      // Check product stock in Firestore before adding to cart
+      const productRef = doc(db, 'products', item.id);
+      const productSnap = await getDoc(productRef);
+      
+      if (productSnap.exists()) {
+        const productData = productSnap.data();
+        
+        // Verify the product has sufficient stock
+        if (!productData.stock || productData.stock <= 0) {
+          // If using this in a context without toast access, you might need another error handling approach
+          console.error(`Cannot add ${item.name} to cart: Out of stock`);
+          return { success: false, message: 'Product is out of stock' };
+        }
+        
+        // Otherwise add to cart
+        setCart(prev => {
+          // Check if item already exists in cart (matching id, size, color)
+          const existingItemIndex = prev.findIndex(
+            cartItem => 
+              cartItem.id === item.id && 
+              cartItem.size === item.size && 
+              cartItem.color === item.color
+          );
+          
+          if (existingItemIndex !== -1) {
+            // Update quantity if item exists
+            const updatedCart = [...prev];
+            updatedCart[existingItemIndex].quantity += item.quantity;
+            return updatedCart;
+          } else {
+            // Add new item if it doesn't exist
+            return [...prev, item];
+          }
+        });
+        
+        // Update cart in Firestore if user is logged in
+        if (user) {
+          // Save cart to Firestore
+          await setDoc(doc(db, 'carts', user.uid), {
+            items: [...cart, item],
+            updatedAt: new Date().toISOString()
+          }, { merge: true });
+        } else {
+          // If no user, save to localStorage
+          localStorage.setItem('cart', JSON.stringify([...cart, item]));
+        }
+        
+        // Set cart is open to show the user what was added
+        setIsCartOpen(true);
+        
+        return { success: true };
       } else {
-        // Add new item if it doesn't exist
-        return [...prevCart, item];
+        return { success: false, message: 'Product not found' };
       }
-    });
-    
-    // Open cart sidebar when item is added
-    setIsCartOpen(true);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      return { success: false, message: 'Failed to add to cart' };
+    }
   };
 
   // Remove item from cart

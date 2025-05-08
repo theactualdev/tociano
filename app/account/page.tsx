@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,9 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Shield } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function AccountPage() {
-  const { user, userData, updateUserProfile } = useAuth();
+  const { user, userData, updateUserProfile, isAdmin } = useAuth();
   const { toast } = useToast();
   
   const [isEditing, setIsEditing] = useState(false);
@@ -24,6 +28,27 @@ export default function AccountPage() {
   });
   
   const [isLoading, setIsLoading] = useState(false);
+  const [localIsAdmin, setLocalIsAdmin] = useState(isAdmin);
+  
+  // Check admin status directly from Firestore on component mount
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log('Direct Firestore admin check:', userData.isAdmin);
+            setLocalIsAdmin(userData.isAdmin || false);
+          }
+        } catch (error) {
+          console.error('Error checking admin status:', error);
+        }
+      }
+    };
+    
+    checkAdminStatus();
+  }, [user]);
   
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,9 +103,17 @@ export default function AccountPage() {
             </AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-xl font-semibold">
-              {userData?.displayName || 'User'}
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold">
+                {userData?.displayName || 'User'}
+              </h2>
+              {localIsAdmin && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <Shield className="h-3 w-3" />
+                  Admin
+                </Badge>
+              )}
+            </div>
             <p className="text-muted-foreground">{user?.email}</p>
           </div>
         </div>
@@ -183,6 +216,21 @@ export default function AccountPage() {
                       Phone Number
                     </h3>
                     <p>{userData?.phoneNumber || 'Not provided'}</p>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium text-muted-foreground mb-1">
+                      Account Type
+                    </h3>
+                    <div className="flex items-center">
+                      {localIsAdmin ? (
+                        <div className="flex items-center text-primary gap-1">
+                          <Shield className="h-4 w-4" />
+                          <span>Administrator</span>
+                        </div>
+                      ) : (
+                        <span>Standard User</span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 

@@ -45,6 +45,7 @@ const products = [
     colors: ["Red", "Blue", "Green"],
     sizes: ["S", "M", "L", "XL"],
     isNew: true,
+    stock: 10
   },
   {
     id: "2",
@@ -55,6 +56,7 @@ const products = [
     colors: ["White", "Blue", "Gold"],
     sizes: ["M", "L", "XL", "XXL"],
     isNew: false,
+    stock: 5
   },
   // Add more products...
 ];
@@ -74,6 +76,19 @@ const sortOptions = [
   { value: "name-a-z", label: "Name: A to Z" },
   { value: "name-z-a", label: "Name: Z to A" },
 ];
+
+// Define the product interface to match our data structure
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  category: string;
+  colors: string[];
+  sizes: string[];
+  isNew: boolean;
+  stock: number;
+}
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -209,26 +224,52 @@ function ProductsContent() {
     }
   });
 
-  const handleAddToCart = (product: any) => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: 1,
-      image: product.image,
-    });
+  const handleAddToCart = async (product: Product) => {
+    // Check if product is in stock
+    if (product.stock <= 0) {
+      toast({
+        title: "Out of Stock",
+        description: `${product.name} is currently out of stock.`,
+        variant: "destructive"
+      });
+      return;
+    }
 
-    toast({
-      title: "Added to Cart",
-      description: `${product.name} has been added to your cart`,
-    });
+    try {
+      const result = await addToCart({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: 1,
+        image: product.image,
+      });
+
+      if (result && result.success) {
+        toast({
+          title: "Added to Cart",
+          description: `${product.name} has been added to your cart`,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: result?.message || "Failed to add product to cart. It may be out of stock.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add product to cart",
+        variant: "destructive"
+      });
+    }
   };
 
     function isInWishlist(id: string) {
         return wishlistItems.some((item) => item.productId === id);
     }
 
-    async function addToWishlist(product: { id: string; name: string; price: number; image: string; category: string; colors: string[]; sizes: string[]; isNew: boolean; }) {
+    async function addToWishlist(product: Product) {
         if (!user) {
             toast({
                 title: "Authentication Required",
@@ -252,8 +293,6 @@ function ProductsContent() {
             const addedDoc = await addDoc(docRef, newItem);
 
             setWishlistItems((prev) => [...prev, { id: addedDoc.id, ...newItem }]);
-
-            setWishlistItems((prev) => [...prev, { id: docRef.id, ...newItem }]);
             toast({
                 title: "Added to Wishlist",
                 description: `${product.name} has been added to your wishlist.`,
@@ -493,9 +532,10 @@ function ProductsContent() {
                     <Button
                       className="flex-1"
                       onClick={() => handleAddToCart(product)}
+                      disabled={product.stock <= 0}
                     >
                       <ShoppingBag className="h-4 w-4 mr-2" />
-                      Add to Cart
+                      {product.stock <= 0 ? "Out of Stock" : "Add to Cart"}
                     </Button>
                     <Button
                       variant="outline"
