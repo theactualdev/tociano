@@ -169,9 +169,7 @@ function CartItemCard({
 function CartFooter({ setIsOpen }: { setIsOpen: (isOpen: boolean) => void }) {
   const { cart, subtotal } = useCart();
   
-  // Fixed shipping cost for Nigeria (could be made dynamic based on location/weight)
-  const shipping = cart.length > 0 ? 2000 : 0; // 2000 Naira
-  const total = subtotal + shipping;
+  const total = subtotal;
 
   if (cart.length === 0) {
     return null;
@@ -184,9 +182,9 @@ function CartFooter({ setIsOpen }: { setIsOpen: (isOpen: boolean) => void }) {
           <span className="text-muted-foreground">Subtotal</span>
           <span>{formatCurrency(subtotal)}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Shipping</span>
-          <span>{formatCurrency(shipping)}</span>
+        <div className="flex justify-between text-sm text-muted-foreground">
+          <span>Delivery</span>
+          <span>Pay to rider</span>
         </div>
         <Separator />
         <div className="flex justify-between font-medium text-lg pt-2">

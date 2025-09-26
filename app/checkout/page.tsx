@@ -33,21 +33,6 @@ export default function CheckoutPage() {
   const { toast } = useToast();
   const router = useRouter();
 
-  const [shippingOptions, setShippingOptions] = useState([
-    {
-      id: "standard",
-      name: "Standard Delivery",
-      price: 2000,
-      description: "3-5 business days",
-    },
-    {
-      id: "express",
-      name: "Express Delivery",
-      price: 4500,
-      description: "1-2 business days",
-    },
-  ]);
-
   const [formData, setFormData] = useState({
     firstName: userData?.displayName?.split(" ")[0] || "",
     lastName: userData?.displayName?.split(" ").slice(1).join(" ") || "",
@@ -59,43 +44,9 @@ export default function CheckoutPage() {
     postalCode: userData?.address?.postalCode || "N/A",
   });
 
-  const [selectedShipping, setSelectedShipping] = useState("standard");
-
-  const shippingCost =
-    shippingOptions.find((option) => option.id === selectedShipping)?.price ||
-    0;
   const total = subtotal;
 
-  useEffect(() => {
-    const fetchShippingRates = async () => {
-      try {
-        const siteSettings = await getSiteSettings();
 
-        if (siteSettings?.shippingRates) {
-          const rates = siteSettings.shippingRates;
-
-          setShippingOptions([
-            {
-              id: "standard",
-              name: "Standard Delivery",
-              price: rates.standard || 2000,
-              description: "3-5 business days",
-            },
-            {
-              id: "express",
-              name: "Express Delivery",
-              price: rates.express || 4500,
-              description: "1-2 business days",
-            },
-          ]);
-        }
-      } catch (error) {
-        console.error("Error fetching shipping rates:", error);
-      }
-    };
-
-    fetchShippingRates();
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -116,7 +67,7 @@ export default function CheckoutPage() {
           const productsQuery = query(collection(db, "products"));
           const allProducts = await getDocs(productsQuery);
 
-          let foundProduct = null;
+          let foundProduct: { id: string; data: any } | null = null;
           allProducts.forEach((doc) => {
             const data = doc.data();
             if (data.name === item.name) {
@@ -168,10 +119,6 @@ export default function CheckoutPage() {
       const order = {
         userId: user?.uid || "guest",
         items: cart,
-        shipping: {
-          method: selectedShipping,
-          cost: shippingCost,
-        },
         customer: {
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
@@ -224,7 +171,7 @@ export default function CheckoutPage() {
               const productsQuery = query(collection(db, "products"));
               const allProducts = await getDocs(productsQuery);
 
-              let foundProduct = null;
+              let foundProduct: { id: string; data: any } | null = null;
               allProducts.forEach((doc) => {
                 const data = doc.data();
                 if (data.name === item.name || doc.id === item.id) {
@@ -488,33 +435,16 @@ export default function CheckoutPage() {
             </div>
 
             <div className="bg-card rounded-lg border p-6">
-              <h2 className="text-xl font-semibold mb-4">Shipping Method</h2>
+              <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
               <div className="space-y-4">
-                {/* {shippingOptions.map((option) => (
-                  <div key={option.id} className="flex items-center space-x-4">
-                    <div 
-                      className={`w-6 h-6 rounded-full border flex items-center justify-center ${
-                        selectedShipping === option.id 
-                          ? 'border-primary bg-primary text-primary-foreground' 
-                          : 'border-muted-foreground'
-                      }`}
-                      onClick={() => setSelectedShipping(option.id)}
-                    >
-                      {selectedShipping === option.id && <Check className="h-4 w-4" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex justify-between">
-                        <span className="font-medium">{option.name}</span>
-                        <span className="font-semibold">{formatCurrency(option.price)}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{option.description}</p>
-                    </div>
-                  </div>
-                ))} */}
-                <p className="text-sm mt-1 italic text-muted-foreground">
-                  Payment for delivery is made directly to the delivery person
-                  upon receipt
-                </p>
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <p className="text-sm font-medium text-foreground mb-2">
+                    📦 Free Home Delivery
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Your order will be delivered to your specified address. Payment for delivery fees is made directly to the dispatch rider upon receipt of your items.
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -543,9 +473,9 @@ export default function CheckoutPage() {
                   <span>Subtotal ({cart.length} items)</span>
                   <span>{formatCurrency(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span>Shipping</span>
-                  <span>{formatCurrency(shippingCost)}</span>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Delivery</span>
+                  <span>Pay to rider</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-semibold">
@@ -609,10 +539,10 @@ export default function CheckoutPage() {
                 <span>Subtotal</span>
                 <span>{formatCurrency(subtotal)}</span>
               </div>
-              {/* <div className="flex justify-between text-sm">
-                <span>Shipping</span>
-                <span>{formatCurrency(shippingCost)}</span>
-              </div> */}
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Delivery</span>
+                <span>Pay to rider</span>
+              </div>
               <Separator className="my-2" />
               <div className="flex justify-between font-semibold text-lg pt-2">
                 <span>Total</span>

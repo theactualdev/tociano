@@ -147,8 +147,8 @@ function CheckoutDetails() {
                 <td className="px-4 py-3 text-right">{formatCurrency(order.subtotal)}</td>
               </tr>
               <tr className="border-t">
-                <td className="px-4 py-3 font-medium">Shipping</td>
-                <td className="px-4 py-3 text-right">{formatCurrency(order.shipping.cost)}</td>
+                <td className="px-4 py-3 font-medium text-muted-foreground">Delivery</td>
+                <td className="px-4 py-3 text-right text-muted-foreground">Pay to rider</td>
               </tr>
               <tr className="border-t">
                 <td className="px-4 py-3 font-semibold">Total</td>
@@ -170,12 +170,11 @@ function CheckoutDetails() {
             </address>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Shipping Method</h3>
+            <h3 className="font-semibold mb-4">Delivery Information</h3>
             <div className="flex items-center">
               <Package className="h-5 w-5 mr-2 text-muted-foreground" />
               <span>
-                {order.shipping.method === 'standard' ? 'Standard Delivery (3-5 business days)' : 
-                  'Express Delivery (1-2 business days)'}
+                Home Delivery - Pay delivery fee to rider upon receipt
               </span>
             </div>
           </div>

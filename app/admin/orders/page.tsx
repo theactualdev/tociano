@@ -517,10 +517,15 @@ export default function OrdersPage() {
                   <span className="text-muted-foreground">Subtotal:</span>
                   <span>{formatCurrency(currentOrder.subtotal || currentOrder.total || 0)}</span>
                 </div>
-                {currentOrder.shipping && typeof currentOrder.shipping.cost === 'number' && currentOrder.shipping.cost > 0 && (
+                {currentOrder.shipping && typeof currentOrder.shipping.cost === 'number' && currentOrder.shipping.cost > 0 ? (
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping:</span>
                     <span>{formatCurrency(currentOrder.shipping.cost)}</span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Delivery:</span>
+                    <span className="text-muted-foreground text-sm">Pay to rider</span>
                   </div>
                 )}
                 <div className="flex justify-between font-bold">
