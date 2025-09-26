@@ -10,11 +10,10 @@ import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
 import { useCart, CartItem } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, getDocs, query, collection, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 
-// Define a type for the product data
 interface Product {
   id: string;
   name: string;
@@ -32,9 +31,9 @@ interface Product {
 export default function ProductPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ productId: string }>;
 }) {
-  const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null);
+  const [resolvedParams, setResolvedParams] = useState<{ productId: string } | null>(null);
   
   useEffect(() => {
     const resolveParams = async () => {
@@ -61,48 +60,82 @@ export default function ProductPage({
     inStock: false,
     stock: 0,
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProductData = async (productId: string) => {
       try {
-        const productRef = doc(db, "products", productId);
-        const productSnap = await getDoc(productRef);
-
+        setLoading(true);
+        setError(null);
+        
+        // First try to get product by document ID
+        const productDoc = doc(db, "products", productId);
+        const productSnap = await getDoc(productDoc);
+        
         if (productSnap.exists()) {
-          const { id, ...data } = productSnap.data() as Product;
-          const fetchedProduct = { id: productSnap.id, ...data };
-          setProduct({
-            id: fetchedProduct.id,
-            name: fetchedProduct.name || "",
-            price: fetchedProduct.price || 0,
-            images: fetchedProduct.images || [],
-            description: fetchedProduct.description || "",
-            features: fetchedProduct.features || [],
-            colors: fetchedProduct.colors || [],
-            sizes: fetchedProduct.sizes || [],
-            category: fetchedProduct.category || "",
-            inStock: fetchedProduct.inStock || false,
-            stock: fetchedProduct.stock || 0,
+          const data = productSnap.data();
+          setProduct({ 
+            id: productSnap.id,
+            name: data.name || "",
+            price: data.price || 0,
+            images: data.images || [],
+            description: data.description || "",
+            features: data.features || [],
+            colors: data.colors || [],
+            sizes: data.sizes || [],
+            category: data.category || "",
+            inStock: data.inStock || false,
+            stock: data.stock || 0,
           });
         } else {
-          throw new Error("Product not found");
+          // Fallback: search by id field in document data
+          const q = query(
+            collection(db, "products"),
+            where("id", "==", productId)
+          );
+          const querySnap = await getDocs(q);
+          
+          if (!querySnap.empty) {
+            const docData = querySnap.docs[0].data();
+            setProduct({ 
+              id: docData.id,
+              name: docData.name || "",
+              price: docData.price || 0,
+              images: docData.images || [],
+              description: docData.description || "",
+              features: docData.features || [],
+              colors: docData.colors || [],
+              sizes: docData.sizes || [],
+              category: docData.category || "",
+              inStock: docData.inStock || false,
+              stock: docData.stock || 0,
+            });
+          } else {
+            setError("Product not found");
+            console.error("Product not found:", productId);
+          }
         }
       } catch (error) {
         console.error("Error fetching product data:", error);
+        setError("Failed to load product");
+      } finally {
+        setLoading(false);
       }
     };
-    if (resolvedParams) {
-      fetchProductData(resolvedParams.id);
+    
+    if (resolvedParams?.productId) {
+      fetchProductData(resolvedParams.productId);
     }
   }, [resolvedParams]);
 
   const [mainImage, setMainImage] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (product.images.length > 0) {
-      setMainImage(product.images[0]);
+    if (product?.images.length > 0) {
+      setMainImage(product?.images[0]);
     }
-  }, [product.images]);
+  }, [product?.images]);
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -111,15 +144,17 @@ export default function ProductPage({
 
   // Update color and size when product changes
   useEffect(() => {
-    if (product.colors.length > 0) {
+    if (product?.colors.length > 0) {
       setSelectedColor(product.colors[0]);
     }
-    if (product.sizes.length > 0) {
+    if (product?.sizes.length > 0) {
       setSelectedSize(product.sizes[0]);
     }
-  }, [product.colors, product.sizes]);
+  }, [product?.colors, product?.sizes]);
 
   const handleAddToCart = async () => {
+    if (!product) return;
+    
     // Check if product is in stock
     if (product.stock <= 0) {
       toast({
@@ -135,7 +170,7 @@ export default function ProductPage({
       name: product.name,
       price: product.price,
       quantity,
-      image: product.images[0],
+      image: product.images[0] || '',
       color: selectedColor,
       size: selectedSize,
     };
@@ -173,6 +208,42 @@ export default function ProductPage({
   const increaseQuantity = () => {
     setQuantity(quantity + 1);
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-1/4 mb-6"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="aspect-square bg-gray-200 rounded"></div>
+            <div className="space-y-4">
+              <div className="h-8 bg-gray-200 rounded"></div>
+              <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || (!loading && !product.id)) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+          <p className="text-muted-foreground mb-6">
+            {error || "The product you're looking for doesn't exist."}
+          </p>
+          <Button asChild>
+            <Link href="/products">Browse All Products</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

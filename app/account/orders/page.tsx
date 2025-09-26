@@ -45,7 +45,6 @@ export default function OrdersPage() {
     fetchOrders();
   }, [user]);
   
-  // Get status badge variants
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'processing':
@@ -60,8 +59,7 @@ export default function OrdersPage() {
         return <Badge variant="outline">Unknown</Badge>;
     }
   };
-  
-  // Filter orders by status for tabs
+
   const processingOrders = orders.filter(order => order.status === 'processing' || order.status === 'shipped');
   const completedOrders = orders.filter(order => order.status === 'delivered');
   const cancelledOrders = orders.filter(order => order.status === 'cancelled');

@@ -3,8 +3,16 @@
 import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, deleteDoc, doc, addDoc } from 'firebase/firestore';
+import { db } from "@/lib/firebase";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  deleteDoc,
+  doc,
+  addDoc,
+} from "firebase/firestore";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -34,33 +42,6 @@ interface WishlistItem {
   addedAt: Date;
 }
 
-// Mock data (would come from Firebase in production)
-const products = [
-  {
-    id: "1",
-    name: "African Print Midi Dress",
-    price: 25000,
-    image: "https://images.pexels.com/photos/6749514/pexels-photo-6749514.jpeg",
-    category: "women",
-    colors: ["Red", "Blue", "Green"],
-    sizes: ["S", "M", "L", "XL"],
-    isNew: true,
-    stock: 10
-  },
-  {
-    id: "2",
-    name: "Embroidered Agbada Set",
-    price: 45000,
-    image: "https://images.pexels.com/photos/6192608/pexels-photo-6192608.jpeg",
-    category: "men",
-    colors: ["White", "Blue", "Gold"],
-    sizes: ["M", "L", "XL", "XXL"],
-    isNew: false,
-    stock: 5
-  },
-  // Add more products...
-];
-
 const categories = [
   { id: "women", label: "Women" },
   { id: "men", label: "Men" },
@@ -77,12 +58,11 @@ const sortOptions = [
   { value: "name-z-a", label: "Name: Z to A" },
 ];
 
-// Define the product interface to match our data structure
 interface Product {
   id: string;
   name: string;
   price: number;
-  image: string;
+  images: string[];
   category: string;
   colors: string[];
   sizes: string[];
@@ -97,6 +77,7 @@ function ProductsContent() {
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -131,6 +112,32 @@ function ProductsContent() {
     fetchWishlist();
   }, [user, toast]);
 
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const q = query(collection(db, "products"));
+        const querySnapshot = await getDocs(q);
+        const productsList = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Product[];
+        console.log("Fetched products:", productsList);
+
+        setProducts(productsList);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load products",
+          variant: "destructive",
+        });
+      }
+    };
+
+    fetchProducts();
+  }, [toast]);
+  console.log("Products state:", products);
+
   const removeFromWishlist = async (itemId: string) => {
     try {
       await deleteDoc(doc(db, "wishlist", itemId));
@@ -155,7 +162,7 @@ function ProductsContent() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [priceRange, setPriceRange] = useState([0, 10000000]);
   const [sortBy, setSortBy] = useState("newest");
 
   // Initialize filters from URL params
@@ -166,9 +173,7 @@ function ProductsContent() {
     }
   }, [searchParams]);
 
-  // Filter products
   const filteredProducts = products.filter((product) => {
-    // Search query
     if (
       searchQuery &&
       !product.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -176,31 +181,34 @@ function ProductsContent() {
       return false;
     }
 
-    // Categories
-    if (
-      selectedCategories.length > 0 &&
-      !selectedCategories.includes(product.category)
-    ) {
-      return false;
+    if (selectedCategories.length > 0) {
+      // Check if product.category matches any selected category (by id or label)
+      const categoryMatches = selectedCategories.some(selectedCat => {
+        const categoryObj = categories.find(cat => cat.id === selectedCat);
+        return selectedCat === product.category || 
+               (categoryObj && categoryObj.label.toLowerCase() === product.category?.toLowerCase()) ||
+               (categoryObj && categoryObj.id.toLowerCase() === product.category?.toLowerCase());
+      });
+      
+      if (!categoryMatches) {
+        return false;
+      }
     }
 
-    // Sizes
     if (
       selectedSizes.length > 0 &&
-      !product.sizes.some((size) => selectedSizes.includes(size))
+      (!product.sizes || !Array.isArray(product.sizes) || !product.sizes.some((size) => selectedSizes.includes(size)))
     ) {
       return false;
     }
 
-    // Colors
     if (
       selectedColors.length > 0 &&
-      !product.colors.some((color) => selectedColors.includes(color))
+      (!product.colors || !Array.isArray(product.colors) || !product.colors.some((color) => selectedColors.includes(color)))
     ) {
       return false;
     }
 
-    // Price range
     if (product.price < priceRange[0] || product.price > priceRange[1]) {
       return false;
     }
@@ -208,7 +216,6 @@ function ProductsContent() {
     return true;
   });
 
-  // Sort products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortBy) {
       case "price-low-high":
@@ -225,12 +232,11 @@ function ProductsContent() {
   });
 
   const handleAddToCart = async (product: Product) => {
-    // Check if product is in stock
     if (product.stock <= 0) {
       toast({
         title: "Out of Stock",
         description: `${product.name} is currently out of stock.`,
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -241,7 +247,7 @@ function ProductsContent() {
         name: product.name,
         price: product.price,
         quantity: 1,
-        image: product.image,
+        image: product.images[0] || "",
       });
 
       if (result && result.success) {
@@ -252,60 +258,62 @@ function ProductsContent() {
       } else {
         toast({
           title: "Error",
-          description: result?.message || "Failed to add product to cart. It may be out of stock.",
-          variant: "destructive"
+          description:
+            result?.message ||
+            "Failed to add product to cart. It may be out of stock.",
+          variant: "destructive",
         });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to add product to cart",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
 
-    function isInWishlist(id: string) {
-        return wishlistItems.some((item) => item.productId === id);
+  function isInWishlist(id: string) {
+    return wishlistItems.some((item) => item.productId === id);
+  }
+
+  async function addToWishlist(product: Product) {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "You need to be logged in to add items to your wishlist.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    async function addToWishlist(product: Product) {
-        if (!user) {
-            toast({
-                title: "Authentication Required",
-                description: "You need to be logged in to add items to your wishlist.",
-                variant: "destructive",
-            });
-            return;
-        }
+    try {
+      const newItem = {
+        productId: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images[0] || '',
+        userId: user.uid,
+        addedAt: new Date(),
+      };
 
-        try {
-            const newItem = {
-                productId: product.id,
-                name: product.name,
-                price: product.price,
-                image: product.image,
-                userId: user.uid,
-                addedAt: new Date(),
-            };
+      const docRef = collection(db, "wishlist");
+      const addedDoc = await addDoc(docRef, newItem);
 
-            const docRef = collection(db, "wishlist");
-            const addedDoc = await addDoc(docRef, newItem);
-
-            setWishlistItems((prev) => [...prev, { id: addedDoc.id, ...newItem }]);
-            toast({
-                title: "Added to Wishlist",
-                description: `${product.name} has been added to your wishlist.`,
-            });
-        } catch (error) {
-            console.error("Error adding to wishlist:", error);
-            toast({
-                title: "Error",
-                description: "Failed to add item to wishlist.",
-                variant: "destructive",
-            });
-        }
+      setWishlistItems((prev) => [...prev, { id: addedDoc.id, ...newItem }]);
+      toast({
+        title: "Added to Wishlist",
+        description: `${product.name} has been added to your wishlist.`,
+      });
+    } catch (error) {
+      console.error("Error adding to wishlist:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add item to wishlist.",
+        variant: "destructive",
+      });
     }
+  }
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -412,15 +420,52 @@ function ProductsContent() {
             {/* Price Range */}
             <div>
               <Label className="mb-2 block">Price Range</Label>
-              <div className="px-2">
+              <div className="px-2 space-y-4">
+                {/* Input Fields */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Min</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={10000000}
+                      value={priceRange[0]}
+                      onChange={(e) => {
+                        const value = Math.max(0, Math.min(parseInt(e.target.value) || 0, priceRange[1]));
+                        setPriceRange([value, priceRange[1]]);
+                      }}
+                      className="h-8 text-sm"
+                      placeholder="Min price"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Max</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      max={10000000}
+                      value={priceRange[1]}
+                      onChange={(e) => {
+                        const value = Math.max(priceRange[0], Math.min(parseInt(e.target.value) || 0, 10000000));
+                        setPriceRange([priceRange[0], value]);
+                      }}
+                      className="h-8 text-sm"
+                      placeholder="Max price"
+                    />
+                  </div>
+                </div>
+                
+                {/* Slider */}
                 <Slider
                   value={priceRange}
                   min={0}
-                  max={100000}
-                  step={1000}
+                  max={10000000}
+                  step={10000}
                   onValueChange={setPriceRange}
                 />
-                <div className="flex justify-between mt-2 text-sm">
+                
+                {/* Currency Display */}
+                <div className="flex justify-between text-sm text-muted-foreground">
                   <span>{formatCurrency(priceRange[0])}</span>
                   <span>{formatCurrency(priceRange[1])}</span>
                 </div>
@@ -486,7 +531,7 @@ function ProductsContent() {
                 setSelectedCategories([]);
                 setSelectedSizes([]);
                 setSelectedColors([]);
-                setPriceRange([0, 100000]);
+                setPriceRange([0, 10000000]);
               }}
             >
               Clear Filters
@@ -505,7 +550,7 @@ function ProductsContent() {
                 >
                   <div className="aspect-square relative overflow-hidden">
                     <Image
-                      src={product.image}
+                      src={product.images[0]}
                       alt={product.name}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -583,7 +628,9 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<div className="container mx-auto px-4 py-16">Loading...</div>}>
+    <Suspense
+      fallback={<div className="container mx-auto px-4 py-16">Loading...</div>}
+    >
       <ProductsContent />
     </Suspense>
   );

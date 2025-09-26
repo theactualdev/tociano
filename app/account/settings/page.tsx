@@ -33,8 +33,6 @@ import { formatDate } from '@/lib/utils';
 export default function SettingsPage() {
   const { user, userData, isTwoFactorEnabled, changePassword, changeEmail, enableTwoFactor, disableTwoFactor, getLoginActivity } = useAuth();
   const { toast } = useToast();
-  
-  // Form states
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -43,12 +41,10 @@ export default function SettingsPage() {
   const [loginHistory, setLoginHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   
-  // Dialog visibility states
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [historyDialogOpen, setHistoryDialogOpen] = useState(false);
   
-  // Submit states
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [notifications, setNotifications] = useState({

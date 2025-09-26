@@ -87,7 +87,7 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  images: string;
+  images: string[];
   category: string;
   isNew?: boolean;
   isFeatured?: boolean;
@@ -103,7 +103,7 @@ function ProductCard({ product }: { product: Product }) {
       name: product.name,
       price: product.price,
       quantity: 1,
-      image: product.images,
+      image: product.images[0] || '',
     };
 
     addToCart(cartItem);

@@ -11,7 +11,6 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { Suspense } from 'react';
 
-// Inner component that uses useSearchParams
 function CheckoutDetails() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -22,7 +21,6 @@ function CheckoutDetails() {
   const [error, setError] = useState('');
   
   useEffect(() => {
-    // Redirect if no order ID is provided
     if (!orderId) {
       router.push('/');
       return;
@@ -48,7 +46,6 @@ function CheckoutDetails() {
     fetchOrder();
   }, [orderId, router]);
   
-  // If loading
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -60,7 +57,6 @@ function CheckoutDetails() {
     );
   }
   
-  // If error
   if (error) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -86,7 +82,6 @@ function CheckoutDetails() {
           </p>
         </div>
         
-        {/* Order Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="p-4 bg-muted rounded-lg">
             <h3 className="font-semibold mb-2">Order Number</h3>
@@ -106,7 +101,6 @@ function CheckoutDetails() {
           </div>
         </div>
         
-        {/* Order Status */}
         <div className="bg-muted p-4 rounded-lg mb-8">
           <div className="flex items-center">
             <div className="mr-4">
@@ -121,7 +115,6 @@ function CheckoutDetails() {
           </div>
         </div>
         
-        {/* Order Summary */}
         <h2 className="text-xl font-bold mb-4">Order Summary</h2>
         <div className="border rounded-lg overflow-hidden mb-8">
           <table className="w-full">
@@ -165,7 +158,6 @@ function CheckoutDetails() {
           </table>
         </div>
         
-        {/* Shipping Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div>
             <h3 className="font-semibold mb-4">Shipping Address</h3>
@@ -191,7 +183,6 @@ function CheckoutDetails() {
         
         <Separator className="my-8" />
         
-        {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild variant="outline">
             <Link href="/account/orders">View My Orders</Link>
@@ -205,7 +196,6 @@ function CheckoutDetails() {
   );
 }
 
-// Main export with Suspense boundary
 export default function CheckoutSuccessPage() {
   return (
     <Suspense fallback={

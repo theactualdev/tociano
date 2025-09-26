@@ -4,7 +4,7 @@ const TermsOfService: React.FC = () => {
     return (
         <div className='flex flex-col gap-10 mt-10' style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}>
             <h1>Terms of Service</h1>
-            <p>Last updated: [Insert Date]</p>
+            <p>Last updated: 25/07/2025</p>
 
             <h2>1. Acceptance of Terms</h2>
             <p>

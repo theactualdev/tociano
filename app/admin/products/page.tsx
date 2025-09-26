@@ -67,7 +67,7 @@ const PRODUCT_CATEGORIES = [
 
 // Define product type interface
 interface Product {
-  id?: string;
+  id: string;
   name: string;
   description: string;
   price: number;
@@ -81,6 +81,7 @@ interface Product {
 
 // Empty product template
 const emptyProduct: Product = {
+  id: '',
   name: '',
   description: '',
   price: 0,
@@ -237,7 +238,7 @@ export default function ProductsPage() {
         // Add new product
         const result = await addProduct(formData);
         if (result.success) {
-          const newProduct = { ...formData, id: result.id };
+          const newProduct = { ...formData };
           setProducts([...products, newProduct]);
           
           toast({
@@ -665,6 +666,8 @@ export default function ProductsPage() {
                           src={url} 
                           alt={`Product image ${index + 1}`} 
                           className="h-24 w-full object-cover rounded border border-border"
+                          width={180}
+                          height={200}
                         />
                         <button
                           type="button"

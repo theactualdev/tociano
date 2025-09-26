@@ -1,4 +1,5 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
+import { v4 } from 'uuid';
 import { 
   getAuth,
   updatePassword,
@@ -358,8 +359,9 @@ export const addProduct = async (productData: any) => {
   const docRef = await addDoc(collection(db, 'products'), {
     ...productData,
     createdAt: serverTimestamp(),
+    id: v4()
   });
-  return { success: true, id: docRef.id };
+  return { success: true};
 };
 
 export const deleteProduct = async (productId: string) => {

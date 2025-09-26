@@ -30,7 +30,6 @@ export default function AccountPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [localIsAdmin, setLocalIsAdmin] = useState(isAdmin);
   
-  // Check admin status directly from Firestore on component mount
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (user) {
@@ -50,13 +49,11 @@ export default function AccountPage() {
     checkAdminStatus();
   }, [user]);
   
-  // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
   
-  // Handle save profile
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     

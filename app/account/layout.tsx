@@ -19,7 +19,6 @@ const accountLinks = [
   { name: 'Profile', href: '/account', icon: User },
   { name: 'Orders', href: '/account/orders', icon: Package },
   { name: 'Wishlist', href: '/wishlist', icon: Heart },
-  // { name: 'Payment Methods', href: '/account/payment', icon: CreditCard },
   { name: 'Settings', href: '/account/settings', icon: Settings },
 ];
 
@@ -27,20 +26,17 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   const { user, loading, logout } = useAuth();
   const router = useRouter();
   
-  // Redirect if user is not logged in
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login?redirect=/account');
     }
   }, [user, loading, router]);
   
-  // Handle logout
   const handleLogout = async () => {
     await logout();
     router.push('/');
   };
   
-  // Show loading state
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16">
@@ -52,7 +48,6 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     );
   }
   
-  // If not authenticated, nothing to render (will be redirected)
   if (!user) {
     return null;
   }
@@ -62,7 +57,6 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
       <h1 className="text-2xl font-bold mb-8">My Account</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Sidebar */}
         <aside className="md:col-span-1">
           <div className="space-y-1">
             {accountLinks.map((link) => {
@@ -93,7 +87,6 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           </div>
         </aside>
         
-        {/* Main Content */}
         <div className="md:col-span-3">{children}</div>
       </div>
     </div>
