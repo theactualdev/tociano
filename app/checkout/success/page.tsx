@@ -1,51 +1,51 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { CheckCircle2, Package, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { formatCurrency, formatDate } from '@/lib/utils';
-import { db } from '@/lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import { Suspense } from 'react';
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { CheckCircle2, Package, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { formatCurrency, formatDate } from "@/lib/utils";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { Suspense } from "react";
 
 function CheckoutDetails() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const orderId = searchParams.get('orderId');
-  
+  const orderId = searchParams.get("orderId");
+
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   useEffect(() => {
     if (!orderId) {
-      router.push('/');
+      router.push("/");
       return;
     }
-    
+
     const fetchOrder = async () => {
       try {
-        const orderDoc = await getDoc(doc(db, 'orders', orderId));
-        
+        const orderDoc = await getDoc(doc(db, "orders", orderId));
+
         if (orderDoc.exists()) {
           setOrder({ id: orderDoc.id, ...orderDoc.data() });
         } else {
-          setError('Order not found');
+          setError("Order not found");
         }
       } catch (err) {
-        console.error('Error fetching order:', err);
-        setError('Failed to load order details');
+        console.error("Error fetching order:", err);
+        setError("Failed to load order details");
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchOrder();
   }, [orderId, router]);
-  
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -56,7 +56,7 @@ function CheckoutDetails() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -70,7 +70,7 @@ function CheckoutDetails() {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="max-w-3xl mx-auto bg-card rounded-lg border p-8">
@@ -81,7 +81,7 @@ function CheckoutDetails() {
             Your order has been received and is being processed.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="p-4 bg-muted rounded-lg">
             <h3 className="font-semibold mb-2">Order Number</h3>
@@ -100,7 +100,7 @@ function CheckoutDetails() {
             <p>Paystack</p>
           </div>
         </div>
-        
+
         <div className="bg-muted p-4 rounded-lg mb-8">
           <div className="flex items-center">
             <div className="mr-4">
@@ -109,12 +109,13 @@ function CheckoutDetails() {
             <div>
               <h3 className="font-semibold mb-1">Order Status: Processing</h3>
               <p className="text-sm text-muted-foreground">
-                We&apos;re preparing your order for shipment. You&apos;ll receive an email when your order ships.
+                We&apos;re preparing your order for shipment. You&apos;ll
+                receive an email when your order ships.
               </p>
             </div>
           </div>
         </div>
-        
+
         <h2 className="text-xl font-bold mb-4">Order Summary</h2>
         <div className="border rounded-lg overflow-hidden mb-8">
           <table className="w-full">
@@ -126,7 +127,10 @@ function CheckoutDetails() {
             </thead>
             <tbody>
               {order.items.map((item: any) => (
-                <tr key={`${item.id}-${item.size}-${item.color}`} className="border-t">
+                <tr
+                  key={`${item.id}-${item.size}-${item.color}`}
+                  className="border-t"
+                >
                   <td className="px-4 py-3">
                     <div className="font-medium">{item.name}</div>
                     <div className="text-sm text-muted-foreground">
@@ -144,28 +148,41 @@ function CheckoutDetails() {
             <tfoot className="bg-muted">
               <tr className="border-t">
                 <td className="px-4 py-3 font-medium">Subtotal</td>
-                <td className="px-4 py-3 text-right">{formatCurrency(order.subtotal)}</td>
+                <td className="px-4 py-3 text-right">
+                  {formatCurrency(order.subtotal)}
+                </td>
               </tr>
               <tr className="border-t">
-                <td className="px-4 py-3 font-medium text-muted-foreground">Delivery</td>
-                <td className="px-4 py-3 text-right text-muted-foreground">Pay to rider</td>
+                <td className="px-4 py-3 font-medium text-muted-foreground">
+                  Delivery
+                </td>
+                <td className="px-4 py-3 text-right text-muted-foreground">
+                  Pay to rider
+                </td>
               </tr>
               <tr className="border-t">
                 <td className="px-4 py-3 font-semibold">Total</td>
-                <td className="px-4 py-3 text-right font-semibold">{formatCurrency(order.total)}</td>
+                <td className="px-4 py-3 text-right font-semibold">
+                  {formatCurrency(order.total)}
+                </td>
               </tr>
             </tfoot>
           </table>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div>
             <h3 className="font-semibold mb-4">Shipping Address</h3>
             <address className="not-italic text-muted-foreground">
-              {order.billing.firstName} {order.billing.lastName}<br />
-              {order.billing.address}<br />
-              {order.billing.city}, {order.billing.state} {order.billing.postalCode}<br />
-              Nigeria<br />
+              {order.billing.firstName} {order.billing.lastName}
+              <br />
+              {order.billing.address}
+              <br />
+              {order.billing.city}, {order.billing.state}{" "}
+              {order.billing.postalCode}
+              <br />
+              Nigeria
+              <br />
               {order.billing.phone}
             </address>
           </div>
@@ -179,9 +196,9 @@ function CheckoutDetails() {
             </div>
           </div>
         </div>
-        
+
         <Separator className="my-8" />
-        
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button asChild variant="outline">
             <Link href="/account/orders">View My Orders</Link>
@@ -197,14 +214,16 @@ function CheckoutDetails() {
 
 export default function CheckoutSuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-2xl font-bold mb-4">Loading...</h1>
-          <div className="animate-pulse h-48 bg-secondary rounded-lg"></div>
+    <Suspense
+      fallback={
+        <div className="container mx-auto px-4 py-16 text-center">
+          <div className="max-w-md mx-auto">
+            <h1 className="text-2xl font-bold mb-4">Loading...</h1>
+            <div className="animate-pulse h-48 bg-secondary rounded-lg"></div>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <CheckoutDetails />
     </Suspense>
   );

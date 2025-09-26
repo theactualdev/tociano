@@ -38,15 +38,13 @@ export default function CheckoutPage() {
     lastName: userData?.displayName?.split(" ").slice(1).join(" ") || "",
     email: userData?.email || "",
     phone: userData?.phoneNumber || "",
-    address: userData?.address?.street || "N/A",
-    city: userData?.address?.city || "N/A",
-    state: userData?.address?.state || "N/A",
-    postalCode: userData?.address?.postalCode || "N/A",
+    address: userData?.address?.street || "",
+    city: userData?.address?.city || "",
+    state: userData?.address?.state || "",
+    postalCode: userData?.address?.postalCode || "",
   });
 
   const total = subtotal;
-
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -67,18 +65,18 @@ export default function CheckoutPage() {
           const productsQuery = query(collection(db, "products"));
           const allProducts = await getDocs(productsQuery);
 
-          let foundProduct: { id: string; data: any } | null = null;
+          let foundProductId: string | null = null;
           allProducts.forEach((doc) => {
             const data = doc.data();
             if (data.name === item.name) {
-              foundProduct = { id: doc.id, data: data };
+              foundProductId = doc.id;
             }
           });
 
-          if (!foundProduct) {
+          if (!foundProductId) {
             throw new Error(`Product "${item.name}" is no longer available`);
           }
-          productDoc = await getDoc(doc(db, "products", foundProduct.id));
+          productDoc = await getDoc(doc(db, "products", foundProductId));
         }
 
         const productData = productDoc.data();
@@ -125,14 +123,14 @@ export default function CheckoutPage() {
           phone: formData.phone,
         },
         billing: {
-          firstName: formData.firstName || "N/A",
-          lastName: formData.lastName || "N/A",
-          email: formData.email || "N/A",
-          phone: formData.phone || "N/A",
-          address: formData.address || "N/A",
-          city: formData.city || "N/A",
-          state: formData.state || "N/A",
-          postalCode: formData.postalCode || "N/A",
+          firstName: formData.firstName || "",
+          lastName: formData.lastName || "",
+          email: formData.email || "",
+          phone: formData.phone || "",
+          address: formData.address || "",
+          city: formData.city || "",
+          state: formData.state || "",
+          postalCode: formData.postalCode || "",
         },
         shippingAddress: {
           street: formData.address,
@@ -171,16 +169,16 @@ export default function CheckoutPage() {
               const productsQuery = query(collection(db, "products"));
               const allProducts = await getDocs(productsQuery);
 
-              let foundProduct: { id: string; data: any } | null = null;
+              let foundProductId: string | null = null;
               allProducts.forEach((doc) => {
                 const data = doc.data();
                 if (data.name === item.name || doc.id === item.id) {
-                  foundProduct = { id: doc.id, data: data };
+                  foundProductId = doc.id;
                 }
               });
 
-              if (foundProduct) {
-                productRef = doc(db, "products", foundProduct.id);
+              if (foundProductId) {
+                productRef = doc(db, "products", foundProductId);
                 productDoc = await transaction.get(productRef);
               }
             }
@@ -336,7 +334,11 @@ export default function CheckoutPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form
+            id="checkout-form"
+            onSubmit={handleSubmit}
+            className="space-y-8"
+          >
             <div className="bg-card rounded-lg border p-6">
               <h2 className="text-xl font-semibold mb-4">
                 Contact Information
@@ -435,14 +437,18 @@ export default function CheckoutPage() {
             </div>
 
             <div className="bg-card rounded-lg border p-6">
-              <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
+              <h2 className="text-xl font-semibold mb-4">
+                Delivery Information
+              </h2>
               <div className="space-y-4">
                 <div className="bg-muted/50 p-4 rounded-lg">
                   <p className="text-sm font-medium text-foreground mb-2">
                     📦 Free Home Delivery
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Your order will be delivered to your specified address. Payment for delivery fees is made directly to the dispatch rider upon receipt of your items.
+                    Your order will be delivered to your specified address.
+                    Payment for delivery fees is made directly to the dispatch
+                    rider upon receipt of your items.
                   </p>
                 </div>
               </div>

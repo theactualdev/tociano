@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { ShoppingBag, X, Trash2, Plus, Minus } from 'lucide-react';
-import { useCart, CartItem } from '@/context/CartContext';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useState } from 'react';
-import { formatCurrency } from '@/lib/utils';
+import { ShoppingBag, X, Trash2, Plus, Minus } from "lucide-react";
+import { useCart, CartItem } from "@/context/CartContext";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import { formatCurrency } from "@/lib/utils";
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -28,7 +28,7 @@ export function CartSidebar({ isOpen, setIsOpen }: CartSidebarProps) {
       {/* Sidebar */}
       <div
         className={`fixed top-0 right-0 h-full w-full sm:w-96 bg-background shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+          isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
@@ -106,12 +106,7 @@ function CartItemCard({
     <li className="flex space-x-4 border-b border-border pb-4">
       {/* Image */}
       <div className="h-24 w-20 relative bg-secondary rounded overflow-hidden">
-        <Image
-          src={item.image}
-          alt={item.name}
-          fill
-          className="object-cover"
-        />
+        <Image src={item.image} alt={item.name} fill className="object-cover" />
       </div>
 
       {/* Details */}
@@ -128,12 +123,12 @@ function CartItemCard({
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-        
+
         <div className="text-sm text-muted-foreground mb-2">
           {item.size && <span className="mr-2">Size: {item.size}</span>}
           {item.color && <span>Color: {item.color}</span>}
         </div>
-        
+
         <div className="flex justify-between items-center">
           <div className="flex items-center border rounded">
             <Button
@@ -168,7 +163,7 @@ function CartItemCard({
 
 function CartFooter({ setIsOpen }: { setIsOpen: (isOpen: boolean) => void }) {
   const { cart, subtotal } = useCart();
-  
+
   const total = subtotal;
 
   if (cart.length === 0) {
@@ -198,7 +193,11 @@ function CartFooter({ setIsOpen }: { setIsOpen: (isOpen: boolean) => void }) {
             Checkout
           </Link>
         </Button>
-        <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => setIsOpen(false)}
+        >
           Continue Shopping
         </Button>
       </div>
