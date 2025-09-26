@@ -10,7 +10,14 @@ import { Label } from "@/components/ui/label";
 import { formatCurrency } from "@/lib/utils";
 import { useCart, CartItem } from "@/context/CartContext";
 import { useToast } from "@/hooks/use-toast";
-import { doc, getDoc, getDocs, query, collection, where } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  collection,
+  where,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 
@@ -33,8 +40,10 @@ export default function ProductPage({
 }: {
   params: Promise<{ productId: string }>;
 }) {
-  const [resolvedParams, setResolvedParams] = useState<{ productId: string } | null>(null);
-  
+  const [resolvedParams, setResolvedParams] = useState<{
+    productId: string;
+  } | null>(null);
+
   useEffect(() => {
     const resolveParams = async () => {
       try {
@@ -68,14 +77,14 @@ export default function ProductPage({
       try {
         setLoading(true);
         setError(null);
-        
+
         // First try to get product by document ID
         const productDoc = doc(db, "products", productId);
         const productSnap = await getDoc(productDoc);
-        
+
         if (productSnap.exists()) {
           const data = productSnap.data();
-          setProduct({ 
+          setProduct({
             id: productSnap.id,
             name: data.name || "",
             price: data.price || 0,
@@ -95,10 +104,10 @@ export default function ProductPage({
             where("id", "==", productId)
           );
           const querySnap = await getDocs(q);
-          
+
           if (!querySnap.empty) {
             const docData = querySnap.docs[0].data();
-            setProduct({ 
+            setProduct({
               id: docData.id,
               name: docData.name || "",
               price: docData.price || 0,
@@ -123,7 +132,7 @@ export default function ProductPage({
         setLoading(false);
       }
     };
-    
+
     if (resolvedParams?.productId) {
       fetchProductData(resolvedParams.productId);
     }
@@ -137,8 +146,8 @@ export default function ProductPage({
     }
   }, [product?.images]);
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState<string>('');
-  const [selectedSize, setSelectedSize] = useState<string>('');
+  const [selectedColor, setSelectedColor] = useState<string>("");
+  const [selectedSize, setSelectedSize] = useState<string>("");
   const { addToCart } = useCart();
   const { toast } = useToast();
 
@@ -154,13 +163,13 @@ export default function ProductPage({
 
   const handleAddToCart = async () => {
     if (!product) return;
-    
+
     // Check if product is in stock
     if (product.stock <= 0) {
       toast({
         title: "Out of Stock",
         description: `${product.name} is currently out of stock.`,
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -170,14 +179,14 @@ export default function ProductPage({
       name: product.name,
       price: product.price,
       quantity,
-      image: product.images[0] || '',
+      image: product.images[0] || "",
       color: selectedColor,
       size: selectedSize,
     };
 
     try {
       const result = await addToCart(cartItem);
-      
+
       if (result && result.success) {
         toast({
           title: "Added to cart",
@@ -187,14 +196,14 @@ export default function ProductPage({
         toast({
           title: "Error",
           description: "Failed to add product to cart. It may be out of stock.",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
     } catch (error) {
       toast({
         title: "Error",
         description: "Could not add product to cart. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
     }
   };
@@ -389,9 +398,9 @@ export default function ProductPage({
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <Button 
-                className="flex-1" 
-                size="lg" 
+              <Button
+                className="flex-1"
+                size="lg"
                 onClick={handleAddToCart}
                 disabled={product.stock <= 0}
               >
@@ -463,8 +472,8 @@ export default function ProductPage({
                 Returns Policy
               </h3>
               <p>
-                If you&apos;re not completely satisfied with your purchase, you can
-                return it within 14 days of delivery. Items must be unworn,
+                If you&apos;re not completely satisfied with your purchase, you
+                can return it within 14 days of delivery. Items must be unworn,
                 unwashed, and with all original tags attached. Please note that
                 the customer is responsible for the return shipping costs.
               </p>

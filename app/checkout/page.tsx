@@ -14,7 +14,17 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 import { formatCurrency } from "@/lib/utils";
-import { doc, addDoc, collection, serverTimestamp, updateDoc, getDoc, runTransaction, query, getDocs } from "firebase/firestore";
+import {
+  doc,
+  addDoc,
+  collection,
+  serverTimestamp,
+  updateDoc,
+  getDoc,
+  runTransaction,
+  query,
+  getDocs,
+} from "firebase/firestore";
 import { db, getSiteSettings } from "@/lib/firebase";
 
 export default function CheckoutPage() {
@@ -97,15 +107,15 @@ export default function CheckoutPage() {
     try {
       for (const item of cart) {
         console.log("Validating item:", item.id, item.name);
-        
+
         // Try to find the product
         let productDoc = await getDoc(doc(db, "products", item.id));
-        
+
         if (!productDoc.exists()) {
           // Try to find by querying all products
           const productsQuery = query(collection(db, "products"));
           const allProducts = await getDocs(productsQuery);
-          
+
           let foundProduct = null;
           allProducts.forEach((doc) => {
             const data = doc.data();
@@ -113,18 +123,20 @@ export default function CheckoutPage() {
               foundProduct = { id: doc.id, data: data };
             }
           });
-          
+
           if (!foundProduct) {
             throw new Error(`Product "${item.name}" is no longer available`);
           }
           productDoc = await getDoc(doc(db, "products", foundProduct.id));
         }
-        
+
         const productData = productDoc.data();
         const currentStock = productData?.stock || 0;
-        
+
         if (currentStock < item.quantity) {
-          throw new Error(`Insufficient stock for "${item.name}". Available: ${currentStock}, Requested: ${item.quantity}`);
+          throw new Error(
+            `Insufficient stock for "${item.name}". Available: ${currentStock}, Requested: ${item.quantity}`
+          );
         }
       }
       return true;
@@ -132,7 +144,10 @@ export default function CheckoutPage() {
       console.error("Cart validation failed:", error);
       toast({
         title: "Cart Validation Failed",
-        description: error instanceof Error ? error.message : "Please review your cart and try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Please review your cart and try again.",
         variant: "destructive",
       });
       return false;
@@ -196,17 +211,19 @@ export default function CheckoutPage() {
         await runTransaction(db, async (transaction) => {
           for (const item of cart) {
             console.log("Updating stock for item:", item.id, item.name);
-            
+
             // Try multiple ways to find the product
             let productRef = doc(db, "products", item.id);
             let productDoc = await transaction.get(productRef);
-            
+
             // If not found by direct ID, try to find by querying
             if (!productDoc.exists()) {
-              console.log(`Product not found by ID ${item.id}, searching by name...`);
+              console.log(
+                `Product not found by ID ${item.id}, searching by name...`
+              );
               const productsQuery = query(collection(db, "products"));
               const allProducts = await getDocs(productsQuery);
-              
+
               let foundProduct = null;
               allProducts.forEach((doc) => {
                 const data = doc.data();
@@ -214,38 +231,47 @@ export default function CheckoutPage() {
                   foundProduct = { id: doc.id, data: data };
                 }
               });
-              
+
               if (foundProduct) {
                 productRef = doc(db, "products", foundProduct.id);
                 productDoc = await transaction.get(productRef);
               }
             }
-            
+
             if (productDoc.exists()) {
               const productData = productDoc.data();
               const currentStock = productData.stock || 0;
-              
+
               // Update stock if possible
               if (currentStock >= item.quantity) {
                 const newStock = currentStock - item.quantity;
                 const inStock = newStock > 0;
-                
+
                 transaction.update(productRef, {
                   stock: newStock,
-                  inStock: inStock
+                  inStock: inStock,
                 });
-                console.log(`Stock updated for ${item.name}: ${currentStock} -> ${newStock}`);
+                console.log(
+                  `Stock updated for ${item.name}: ${currentStock} -> ${newStock}`
+                );
               } else {
-                console.warn(`Insufficient stock for ${item.name}. Available: ${currentStock}, Requested: ${item.quantity}`);
+                console.warn(
+                  `Insufficient stock for ${item.name}. Available: ${currentStock}, Requested: ${item.quantity}`
+                );
               }
             } else {
-              console.warn(`Product ${item.name} (ID: ${item.id}) not found for stock update`);
+              console.warn(
+                `Product ${item.name} (ID: ${item.id}) not found for stock update`
+              );
             }
           }
         });
         console.log("Stock update completed successfully");
       } catch (stockError) {
-        console.error("Error updating stock (order still created):", stockError);
+        console.error(
+          "Error updating stock (order still created):",
+          stockError
+        );
         // Don't throw error here since order is already created and payment processed
       }
 
@@ -262,7 +288,8 @@ export default function CheckoutPage() {
       console.error("Error processing order:", error);
       toast({
         title: "Error",
-        description: "Order processing failed. Please contact support with your payment reference.",
+        description:
+          "Order processing failed. Please contact support with your payment reference.",
         variant: "destructive",
       });
     }

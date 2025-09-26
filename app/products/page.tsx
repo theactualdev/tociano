@@ -183,13 +183,18 @@ function ProductsContent() {
 
     if (selectedCategories.length > 0) {
       // Check if product.category matches any selected category (by id or label)
-      const categoryMatches = selectedCategories.some(selectedCat => {
-        const categoryObj = categories.find(cat => cat.id === selectedCat);
-        return selectedCat === product.category || 
-               (categoryObj && categoryObj.label.toLowerCase() === product.category?.toLowerCase()) ||
-               (categoryObj && categoryObj.id.toLowerCase() === product.category?.toLowerCase());
+      const categoryMatches = selectedCategories.some((selectedCat) => {
+        const categoryObj = categories.find((cat) => cat.id === selectedCat);
+        return (
+          selectedCat === product.category ||
+          (categoryObj &&
+            categoryObj.label.toLowerCase() ===
+              product.category?.toLowerCase()) ||
+          (categoryObj &&
+            categoryObj.id.toLowerCase() === product.category?.toLowerCase())
+        );
       });
-      
+
       if (!categoryMatches) {
         return false;
       }
@@ -197,14 +202,18 @@ function ProductsContent() {
 
     if (
       selectedSizes.length > 0 &&
-      (!product.sizes || !Array.isArray(product.sizes) || !product.sizes.some((size) => selectedSizes.includes(size)))
+      (!product.sizes ||
+        !Array.isArray(product.sizes) ||
+        !product.sizes.some((size) => selectedSizes.includes(size)))
     ) {
       return false;
     }
 
     if (
       selectedColors.length > 0 &&
-      (!product.colors || !Array.isArray(product.colors) || !product.colors.some((color) => selectedColors.includes(color)))
+      (!product.colors ||
+        !Array.isArray(product.colors) ||
+        !product.colors.some((color) => selectedColors.includes(color)))
     ) {
       return false;
     }
@@ -292,7 +301,7 @@ function ProductsContent() {
         productId: product.id,
         name: product.name,
         price: product.price,
-        image: product.images[0] || '',
+        image: product.images[0] || "",
         userId: user.uid,
         addedAt: new Date(),
       };
@@ -431,7 +440,10 @@ function ProductsContent() {
                       max={10000000}
                       value={priceRange[0]}
                       onChange={(e) => {
-                        const value = Math.max(0, Math.min(parseInt(e.target.value) || 0, priceRange[1]));
+                        const value = Math.max(
+                          0,
+                          Math.min(parseInt(e.target.value) || 0, priceRange[1])
+                        );
                         setPriceRange([value, priceRange[1]]);
                       }}
                       className="h-8 text-sm"
@@ -446,7 +458,10 @@ function ProductsContent() {
                       max={10000000}
                       value={priceRange[1]}
                       onChange={(e) => {
-                        const value = Math.max(priceRange[0], Math.min(parseInt(e.target.value) || 0, 10000000));
+                        const value = Math.max(
+                          priceRange[0],
+                          Math.min(parseInt(e.target.value) || 0, 10000000)
+                        );
                         setPriceRange([priceRange[0], value]);
                       }}
                       className="h-8 text-sm"
@@ -454,7 +469,7 @@ function ProductsContent() {
                     />
                   </div>
                 </div>
-                
+
                 {/* Slider */}
                 <Slider
                   value={priceRange}
@@ -463,7 +478,7 @@ function ProductsContent() {
                   step={10000}
                   onValueChange={setPriceRange}
                 />
-                
+
                 {/* Currency Display */}
                 <div className="flex justify-between text-sm text-muted-foreground">
                   <span>{formatCurrency(priceRange[0])}</span>
